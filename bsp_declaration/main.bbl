@@ -1,0 +1,146 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{ynt/global//global/global/global}
+    \entry{alliance}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=baaae33af641acca3c686df8b46de873}{%
+           family={Alliance},
+           familyi={A\bibinitperiod},
+           given={WiFi},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{baaae33af641acca3c686df8b46de873}
+      \strng{fullhash}{baaae33af641acca3c686df8b46de873}
+      \strng{fullhashraw}{baaae33af641acca3c686df8b46de873}
+      \strng{bibnamehash}{baaae33af641acca3c686df8b46de873}
+      \strng{authorbibnamehash}{baaae33af641acca3c686df8b46de873}
+      \strng{authornamehash}{baaae33af641acca3c686df8b46de873}
+      \strng{authorfullhash}{baaae33af641acca3c686df8b46de873}
+      \strng{authorfullhashraw}{baaae33af641acca3c686df8b46de873}
+      \field{extraname}{1}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Who is WiFi Alliance?}
+      \verb{urlraw}
+      \verb https://www.wi-fi.org/who-we-are
+      \endverb
+      \verb{url}
+      \verb https://www.wi-fi.org/who-we-are
+      \endverb
+    \endentry
+    \entry{easyconnect}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=baaae33af641acca3c686df8b46de873}{%
+           family={Alliance},
+           familyi={A\bibinitperiod},
+           given={WiFi},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{baaae33af641acca3c686df8b46de873}
+      \strng{fullhash}{baaae33af641acca3c686df8b46de873}
+      \strng{fullhashraw}{baaae33af641acca3c686df8b46de873}
+      \strng{bibnamehash}{baaae33af641acca3c686df8b46de873}
+      \strng{authorbibnamehash}{baaae33af641acca3c686df8b46de873}
+      \strng{authornamehash}{baaae33af641acca3c686df8b46de873}
+      \strng{authorfullhash}{baaae33af641acca3c686df8b46de873}
+      \strng{authorfullhashraw}{baaae33af641acca3c686df8b46de873}
+      \field{extraname}{2}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Wi-Fi Easy Connect}
+      \verb{urlraw}
+      \verb https://www.wi-fi.org/discover-wi-fi/wi-fi-easy-connect
+      \endverb
+      \verb{url}
+      \verb https://www.wi-fi.org/discover-wi-fi/wi-fi-easy-connect
+      \endverb
+      \keyw{IOT}
+    \endentry
+    \entry{wifi6}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=6b9930f1e04c96705a92d101bd817d39}{%
+           family={encyclopedia},
+           familyi={e\bibinitperiod},
+           given={Wikipedia},
+           giveni={W\bibinitperiod},
+           prefix={the\bibnamedelima free},
+           prefixi={t\bibinitperiod\bibinitdelim f\bibinitperiod}}}%
+      }
+      \strng{namehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{fullhash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{fullhashraw}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{bibnamehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authorbibnamehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authornamehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authorfullhash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authorfullhashraw}{6b9930f1e04c96705a92d101bd817d39}
+      \field{extraname}{1}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Wi-Fi 6}
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/wiki/Wi-Fi_6
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/wiki/Wi-Fi_6
+      \endverb
+    \endentry
+    \entry{wiki_alliance}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=6b9930f1e04c96705a92d101bd817d39}{%
+           family={encyclopedia},
+           familyi={e\bibinitperiod},
+           given={Wikipedia},
+           giveni={W\bibinitperiod},
+           prefix={the\bibnamedelima free},
+           prefixi={t\bibinitperiod\bibinitdelim f\bibinitperiod}}}%
+      }
+      \strng{namehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{fullhash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{fullhashraw}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{bibnamehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authorbibnamehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authornamehash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authorfullhash}{6b9930f1e04c96705a92d101bd817d39}
+      \strng{authorfullhashraw}{6b9930f1e04c96705a92d101bd817d39}
+      \field{extraname}{2}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Wi-Fi Alliance}
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/wiki/Wi-Fi_Alliance
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/wiki/Wi-Fi_Alliance
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
