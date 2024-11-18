@@ -20,4 +20,5 @@ Tutor: Marjan Skrobot, marjan.skrobot@uni.lu
 ## References
 
 \[1\]: https://datatracker.ietf.org/doc/html/draft-harkins-pkex-06
+
 \[2\]: https://github.com/warner/python-spake2?tab=readme-ov-file
