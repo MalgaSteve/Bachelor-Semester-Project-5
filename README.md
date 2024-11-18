@@ -8,8 +8,8 @@ The goal of the project is to analyze the PKEX protocol and trying to find
 improvements. 
 
 The first incrementation of the project is an implementation for the draft of
-PKEX created by Dan Harkins [1]. For the authentication phase of the protocol
-SPAKE2 is used. Here we use the implementation "python-spake2" of Warner [2].
+PKEX created by Dan Harkins \[1\]. For the authentication phase of the protocol
+SPAKE2 is used. Here we use the implementation "python-spake2" of Warner \[2\].
 The implementation is than modified according to the reveal phase of PKEX.
 
 
@@ -19,5 +19,5 @@ Tutor: Marjan Skrobot, marjan.skrobot@uni.lu
 
 ## References
 
-[1]: https://datatracker.ietf.org/doc/html/draft-harkins-pkex-06
-[2]: https://github.com/warner/python-spake2?tab=readme-ov-file
+\[1\]: https://datatracker.ietf.org/doc/html/draft-harkins-pkex-06
+\[2\]: https://github.com/warner/python-spake2?tab=readme-ov-file
