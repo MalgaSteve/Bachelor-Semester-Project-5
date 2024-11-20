@@ -68,14 +68,14 @@ SideSymmetric = b"S"
 
 # to serialize intermediate state, just remember x and A-vs-B. And M/N.
 
-def finalize_SPAKE2(idA, idB, X_msg, Y_msg, K_bytes, pw):
+def finalizeSPAKE2(idA, idB, X_msg, Y_msg, K_bytes, pw):
     transcript = b"".join([sha256(pw).digest(),
                            sha256(idA).digest(), sha256(idB).digest(),
                            X_msg, Y_msg, K_bytes])
     key = sha256(transcript).digest()
     return key
 
-def finalize_SPAKE2_symmetric(idSymmetric, msg1, msg2, K_bytes, pw):
+def finalizeSPAKE2_symmetric(idSymmetric, msg1, msg2, K_bytes, pw):
     # since we don't know which side is which, we must sort the messages
     first_msg, second_msg = sorted([msg1, msg2])
     transcript = b"".join([sha256(pw).digest(),
@@ -142,17 +142,6 @@ class SPAKE2_Base:
         key = self._finalize(K_bytes)
         return key
     
-    def hmac(data, num_bytes):
-        return hmac.HMAC(data, algorithm=hashes.SHA256()).copy()
-    
-    def encrypt_message(data, associated_data, key):
-        aessiv = aessiv.AESSIV()
-        return AESSIV.encrypt_message(data, associated_data)
-    
-    def decrypt_message(data, associated_data, key):
-        return AESSIV.decrypt_message(data, associated_data)
-
-
     def hash_params(self):
         # We can't really reconstruct the group from static data, but we'll
         # record enough of the params to confirm that we're using the same
@@ -177,10 +166,10 @@ class SPAKE2_Base:
         d = json.loads(data.decode("ascii"))
         return klass._deserialize_from_dict(d, params)
 
-class SPAKE2_Asymmetric(_SPAKE2_Base):
+class SPAKE2_Asymmetric(SPAKE2_Base):
     def __init__(self, password, idA=b"", idB=b"",
                  params=DefaultParams, entropy_f=os.urandom):
-        _SPAKE2_Base.__init__(self, password,
+        SPAKE2_Base.__init__(self, password,
                               params=params, entropy_f=entropy_f)
 
         assert isinstance(idA, bytes), repr(idA)
@@ -202,7 +191,7 @@ class SPAKE2_Asymmetric(_SPAKE2_Base):
         return inbound_message
 
     def _finalize(self, K_bytes):
-        return finalize_SPAKE2(self.idA, self.idB,
+        return finalizeSPAKE2(self.idA, self.idB,
                                self.X_msg(), self.Y_msg(),
                                K_bytes, self.pw)
 
@@ -240,27 +229,27 @@ class SPAKE2_Asymmetric(_SPAKE2_Base):
         return self
 
 
-# applications should use SPAKE2_A and SPAKE2_B, not raw _SPAKE2_Base()
+# applications should use SPAKE2_A and SPAKE2_B, not raw SPAKE2_Base()
 
-class SPAKE2_A(_SPAKE2_Asymmetric):
+class SPAKE2_A(SPAKE2_Asymmetric):
     side = SideA
     def my_blinding(self): return self.params.M
     def my_unblinding(self): return self.params.N
     def X_msg(self): return self.outbound_message
     def Y_msg(self): return self.inbound_message
 
-class SPAKE2_B(_SPAKE2_Asymmetric):
+class SPAKE2_B(SPAKE2_Asymmetric):
     side = SideB
     def my_blinding(self): return self.params.N
     def my_unblinding(self): return self.params.M
     def X_msg(self): return self.inbound_message
     def Y_msg(self): return self.outbound_message
 
-class SPAKE2_Symmetric(_SPAKE2_Base):
+class SPAKE2_Symmetric(SPAKE2_Base):
     side = SideSymmetric
     def __init__(self, password, idSymmetric=b"",
                  params=DefaultParams, entropy_f=os.urandom):
-        _SPAKE2_Base.__init__(self, password,
+        SPAKE2_Base.__init__(self, password,
                               params=params, entropy_f=entropy_f)
         self.idSymmetric = idSymmetric
 
@@ -278,7 +267,7 @@ class SPAKE2_Symmetric(_SPAKE2_Base):
         return inbound_message
 
     def _finalize(self, K_bytes):
-        return finalize_SPAKE2_symmetric(self.idSymmetric,
+        return finalizeSPAKE2_symmetric(self.idSymmetric,
                                          self.inbound_message,
                                          self.outbound_message,
                                          K_bytes, self.pw)

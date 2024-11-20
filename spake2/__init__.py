@@ -20,8 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .spake2 import SPAKE2_A, SPAKE2_B, SPAKE2_Symmetric, SPAKEError
-SPAKE2_A, SPAKE2_B, SPAKE2_Symmetric, SPAKEError # hush pyflakes
+from .spake2 import SPAKE2_A, SPAKE2_B, SPAKE2_Asymmetric, SPAKEError
+SPAKE2_A, SPAKE2_B, SPAKE2_Asymmetric, SPAKEError # hush pyflakes
+from .PKEX import PKEX_A, PKEX_B
 
 from . import _version
 __version__ = _version.get_versions()['version']
