@@ -12,6 +12,12 @@ PKEX created by Dan Harkins \[1\]. For the authentication phase of the protocol
 SPAKE2 is used. Here we use the implementation "python-spake2" of Warner \[2\].
 The implementation is than modified according to the reveal phase of PKEX.
 
+## Location of PKEX implementation
+spake2/pkex.py
+
+## Experiment with Code
+Both files test\_spake2.py test\_pkex.py files are the files which are used to experiment, test and benchmark the
+implementation of spake2 and pkex for now.
 
 ## People working on the projects
 Student name: Steve Meireles Lopes, steve.meireles.001@student.uni.lu, 022148763b

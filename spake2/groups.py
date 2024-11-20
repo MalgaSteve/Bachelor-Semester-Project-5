@@ -22,7 +22,8 @@
 
 import hashlib
 from cryptography.hazmat.primitives.kdf import hkdf
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, hmac
+from cryptography.hazmat.primitives.ciphers.aead import AESSIV
 from .util import (size_bits, size_bytes, unbiased_randrange,
                    bytes_to_number, number_to_bytes)
 
@@ -107,7 +108,7 @@ def expand_arbitrary_element_seed(data, num_bytes):
         salt=b"",
         info=b"SPAKE2 arbitrary element"
     ).derive(data)
-
+     
 class _Element:
     def __init__(self, group, e):
         self._group = group

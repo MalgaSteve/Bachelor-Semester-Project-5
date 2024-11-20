@@ -25,6 +25,9 @@ from binascii import hexlify, unhexlify
 from hashlib import sha256
 from .params import _Params
 from .parameters.ed25519 import ParamsEd25519
+from cryptography.hazmat.primitives.kdf import hkdf
+from cryptography.hazmat.primitives import hashes, hmac
+from cryptography.hazmat.primitives.ciphers.aead import AESSIV
 
 DefaultParams = ParamsEd25519
 
@@ -81,7 +84,7 @@ def finalize_SPAKE2_symmetric(idSymmetric, msg1, msg2, K_bytes, pw):
     key = sha256(transcript).digest()
     return key
 
-class _SPAKE2_Base:
+class SPAKE2_Base:
     "This class manages one side of a SPAKE2 key negotiation."
 
     side = None # set by the subclass
@@ -138,6 +141,16 @@ class _SPAKE2_Base:
         K_bytes = K_elem.to_bytes()
         key = self._finalize(K_bytes)
         return key
+    
+    def hmac(data, num_bytes):
+        return hmac.HMAC(data, algorithm=hashes.SHA256()).copy()
+    
+    def encrypt_message(data, associated_data, key):
+        aessiv = aessiv.AESSIV()
+        return AESSIV.encrypt_message(data, associated_data)
+    
+    def decrypt_message(data, associated_data, key):
+        return AESSIV.decrypt_message(data, associated_data)
 
 
     def hash_params(self):
@@ -164,7 +177,7 @@ class _SPAKE2_Base:
         d = json.loads(data.decode("ascii"))
         return klass._deserialize_from_dict(d, params)
 
-class _SPAKE2_Asymmetric(_SPAKE2_Base):
+class SPAKE2_Asymmetric(_SPAKE2_Base):
     def __init__(self, password, idA=b"", idB=b"",
                  params=DefaultParams, entropy_f=os.urandom):
         _SPAKE2_Base.__init__(self, password,
