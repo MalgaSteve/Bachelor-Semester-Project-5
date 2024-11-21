@@ -46,43 +46,55 @@ class PKEX(SPAKE2_Asymmetric):
                                 self.xy_elem.to_bytes())
 
 
-        self.h = self.hmac_f(data_to_authenticate)
-        self.u = self.h.finalize()
+        self.u = self.hmac_f(key, data_to_authenticate).finalize()
+
+        assert len(self.u) == 32, len(self.u)
+
+        print("HMAC:\n", self.u)
+        message = self.u + self.AB_element.to_bytes()
+        print("HMAC + AB_element:\n", message)
 
         # associated data?
-        encrypted_data = self.encrypt_message(self.u + self.AB_element.to_bytes(), key)
+        encrypted_data = self.encrypt_message(message, key)
+        print("Data sent:\n", encrypted_data)
 
         return encrypted_data
 
     def finalize(self, key, data):
+        print("Data recieved:\n", data)
         input_data = self.decrypt_message(data, key)
+        print("Data recieved decrypted:\n", input_data)
 
-        input_hmac = input_data[:256]
-        A_in_bytes = input_data[256:]
+        input_hmac = input_data[:32]
+        print("Computed hmac:\n", input_hmac)
+        A_in_bytes = input_data[32:]
 
         g = self.params.group
         AB_element = g.bytes_to_element(A_in_bytes)
-        self.shared_element = AB_element.scalarmult()
+        self.shared_element = AB_element.scalarmult(self.xy_scalar)
 
-        data_to_authenticate = (self.shared_element.to_bytes() + self.side
-                                    + AB_element.to_bytes() + self.xy_elem.to_bytes()
+        data_to_authenticate = (self.shared_element.to_bytes()
+                                    + self.side
+                                    + self.AB_element.to_bytes()
+                                    + self.xy_elem.to_bytes()
                                     + self.opposing_element.to_bytes())
-        self.u_check = self.hmac_f(data_to_authenticate)
-        self.u_check.verify(input_hmac)
-        self.u_check.finalize()
+        self.u_check = self.hmac_f(key, data_to_authenticate)
 
+        assert self.u_check.verify(input_hmac)
         return True
 
-    def hmac_f(self, data):
-        return hmac.HMAC(data, algorithm=hashes.SHA256())
+    def hmac_f(self, key, data):
+        h = hmac.HMAC(key, algorithm=hashes.SHA256())
+        h.update(data)
+        return h
     
     def encrypt_message(self, data, key):
-        aessiv = AESSIV.AESSIV(key)
-        return aessiv.encrypt_message(data)
+        aessiv = AESSIV(key)
+        return aessiv.encrypt(data, None)
     
     def decrypt_message(self, data, key):
-        aessiv = AESSIV.AESSIV(key)
-        return aessiv.decrypt_message(data)
+        aessiv = AESSIV(key)
+        return aessiv.decrypt(data, None)
 
 class PKEX_A(PKEX):
     side = b"A"
