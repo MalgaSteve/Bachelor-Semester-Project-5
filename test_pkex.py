@@ -22,13 +22,14 @@ print(key_b)
 ### PKEX =============================================================
 
 msg_out_a_pkex = s_a.start_pkex(key_a)
+print("Message out -------> ", msg_out_a_pkex)
+
 msg_out_b_pkex = s_b.start_pkex(key_b)
+print("Message out -------> ", msg_out_b_pkex)
 
-print(msg_out_a_pkex)
-print(msg_out_b_pkex)
 
-finished_a = s_a.finalize(key_a, msg_out_a_pkex)
-finished_b = s_b.finalize(key_b, msg_out_b_pkex)
+finished_a = s_a.finalize(key_a, msg_out_b_pkex)
+finished_b = s_b.finalize(key_b, msg_out_a_pkex)
 
-print(finished_a)
-print(finished_b)
+if finished_a and finished_b:
+    print("Successful exchange!")

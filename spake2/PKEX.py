@@ -17,17 +17,12 @@ class DecryptionFailed(PKEXError):
     """Decryption failed"""
 
 class PKEX(SPAKE2_Asymmetric):
-    #def __init__(self, password, idA=b"", idB=b"", params=DefaultParams,
-    #             entropy_f=os.urandom):
-    #    SPAKE2_Asymmetric.__init(self, password, params=params,
-    #                             entropy_f=entropy_f)
-    #
     def start_pkex(self, key):
         if not self._finished: 
             raise RunSpakeFirst("start_pkex() may only be called when SPAKE2 protocol is finished running")
 
         g = self.params.group
-        
+
         # inbound_element is public key A (pA)
         inbound_elem = g.bytes_to_element(self.inbound_message) 
 
@@ -35,14 +30,15 @@ class PKEX(SPAKE2_Asymmetric):
         self.ab_scalar = g.random_scalar(self.entropy_f)
         self.AB_element = g.Base.scalarmult(self.ab_scalar)
 
+
         # pw_blinding = M or N * pw
         pw_unblinding = self.my_unblinding().scalarmult(-self.pw_scalar)
-        self.opposing_element = inbound_elem.add(pw_unblinding)
+        self.opposite_element = inbound_elem.add(pw_unblinding)
         # element_to_send is ab_scalar * Y
-        self.element_to_send = self.opposing_element.scalarmult(self.ab_scalar)
+        self.element_to_send = self.opposite_element.scalarmult(self.ab_scalar)
         data_to_authenticate = (self.element_to_send.to_bytes() + self.side +
                                 self.AB_element.to_bytes() + 
-                                self.opposing_element.to_bytes() +
+                                self.opposite_element.to_bytes() +
                                 self.xy_elem.to_bytes())
 
 
@@ -50,37 +46,38 @@ class PKEX(SPAKE2_Asymmetric):
 
         assert len(self.u) == 32, len(self.u)
 
-        print("HMAC:\n", self.u)
         message = self.u + self.AB_element.to_bytes()
-        print("HMAC + AB_element:\n", message)
 
         # associated data?
         encrypted_data = self.encrypt_message(message, key)
-        print("Data sent:\n", encrypted_data)
-
         return encrypted_data
 
     def finalize(self, key, data):
-        print("Data recieved:\n", data)
         input_data = self.decrypt_message(data, key)
-        print("Data recieved decrypted:\n", input_data)
 
         input_hmac = input_data[:32]
-        print("Computed hmac:\n", input_hmac)
         A_in_bytes = input_data[32:]
 
         g = self.params.group
         AB_element = g.bytes_to_element(A_in_bytes)
+
         self.shared_element = AB_element.scalarmult(self.xy_scalar)
 
-        data_to_authenticate = (self.shared_element.to_bytes()
-                                    + self.side
-                                    + self.AB_element.to_bytes()
-                                    + self.xy_elem.to_bytes()
-                                    + self.opposing_element.to_bytes())
-        self.u_check = self.hmac_f(key, data_to_authenticate)
+        if self.side == b"A":
+            in_side = b"B"
+        elif self.side == b"B":
+            in_side = b"A"
 
-        assert self.u_check.verify(input_hmac)
+        data_to_authenticate = (self.shared_element.to_bytes()
+                                    + in_side
+                                    + AB_element.to_bytes()
+                                    + self.xy_elem.to_bytes()
+                                    + self.opposite_element.to_bytes())
+
+        assert input_hmac != None
+        self.u_check = self.hmac_f(key, data_to_authenticate)
+        self.u_check.verify(input_hmac)
+
         return True
 
     def hmac_f(self, key, data):
@@ -89,12 +86,20 @@ class PKEX(SPAKE2_Asymmetric):
         return h
     
     def encrypt_message(self, data, key):
+        if (self.side == b'A'):
+            associated_data = [b'\x00']
+        elif (self.side == b'B'):
+            associated_data = [b'\x11']
         aessiv = AESSIV(key)
-        return aessiv.encrypt(data, None)
+        return aessiv.encrypt(data, associated_data)
     
     def decrypt_message(self, data, key):
+        if (self.side == b'A'):
+            associated_data = [b'\x11']
+        elif (self.side == b'B'):
+            associated_data = [b'\x00']
         aessiv = AESSIV(key)
-        return aessiv.decrypt(data, None)
+        return aessiv.decrypt(data, associated_data)
 
 class PKEX_A(PKEX):
     side = b"A"
