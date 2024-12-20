@@ -30,7 +30,6 @@ class PKEX(SPAKE2_Asymmetric):
         self.ab_scalar = g.random_scalar(self.entropy_f)
         self.AB_element = g.Base.scalarmult(self.ab_scalar)
 
-
         # pw_blinding = M or N * pw
         pw_unblinding = self.my_unblinding().scalarmult(-self.pw_scalar)
         self.opposite_element = inbound_elem.add(pw_unblinding)
@@ -79,6 +78,7 @@ class PKEX(SPAKE2_Asymmetric):
         self.u_check.verify(input_hmac)
 
         return True
+
 
     def hmac_f(self, key, data):
         h = hmac.HMAC(key, algorithm=hashes.SHA256())

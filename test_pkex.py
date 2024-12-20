@@ -1,6 +1,9 @@
 from spake2.PKEX import PKEX_A
 from spake2.PKEX import PKEX_B
 
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
 s_a = PKEX_A(b"our password")
 s_b = PKEX_B(b"our password")
 
@@ -18,6 +21,7 @@ assert key_a == key_b
 
 print(key_a)
 print(key_b)
+print(len(key_a))
 
 ### PKEX =============================================================
 
