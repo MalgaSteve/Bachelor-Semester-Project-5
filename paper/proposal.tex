@@ -1,0 +1,292 @@
+\section{Our Proposal}
+
+Our proposal aims to address the limitations identified in the PKEX
+protocol by proposing a more modular and flexible approach. Our protocol
+maintains the same security properties as PKEX while allowing for greater
+adaptability and ease of implementation.
+
+\subsection{Properties}
+Our proposal preserves the core security properties of PKEX:
+\begin{itemize}
+	\item An adversary cannot subvert the exchange without knowing the password.
+	\item An adversary cannot obtain the password through a passive attack.
+	\item The protocol detects whether a guess of the password is correct.
+	\item Proof of possession of the private key is ensured.
+	\item At the end of the exchange, trust is established in the entity's
+		public key, which is cryptographically bound to the entity's identity.
+		The exchange fails if this binding is not confirmed.
+\end{itemize}
+
+\subsection{Notation}
+For clarity, we introduce the following notation:
+\begin{itemize}
+	\item Password or shared secret key: \( pw \)
+	\item Private key: \( sk \)
+	\item Public key: \( pk \)
+\end{itemize}
+
+\subsection{Protocol Definition}
+Our protocol follows a two-phase structure, similar to PKEX, but with the
+flexibility to use different PAKE protocols and modular components.
+
+\subsubsection{Authentication Phase}
+In this phase, the protocol is very similar to the authentication phase in
+PKEX. However, unlike PKEX, which uses SPAKE2, our proposal allows using 
+any secure Password-Authenticated Key Exchange (PAKE) protocol. This provides
+greater flexibility, enabling the use of more secure or efficient PAKE
+protocols as needed. 
+
+Let’s assume two parties: Alice and Bob. They engage in a PAKE protocol to
+derive a shared secret and public key. The result is the following:
+
+\[
+\text{Alice} \xrightarrow{\text{PAKE}} \text{Bob} \rightarrow (\text{shared secret } sk, \text{public key } pk)
+\]
+
+\subsubsection{Proof of Possession Phase}
+In the second phase, the Proof of Possession (PoP) mechanism is incorporated to
+verify the ownership of the private key corresponding to the public key
+exchanged in the previous phase. This is achieved by having the entities prove
+they possess the private key without revealing it. This ensures that only the
+entity with the correct private key can complete the exchange, providing
+additional security against impersonation and man-in-the-middle attacks.
+
+The protocol's modularity allows for the replacement or enhancement of
+individual components, such as the PAKE or PoP methods, without requiring
+changes to the entire protocol. This design makes our protocol more adaptable
+and easier to update with newer cryptographic techniques as they become
+available.
+
+Formal Definition:
+
+\begin{definition} [Key generation and proof of possession scheme] A key
+	generation and proof of possession (KGPOP) scheme consists of: 
+\begin{itemize}
+	\item \(PoP.KG() \rightarrow (pk, sk)\):A probabilistic key
+		generation algorithm that outputs a public, secret key pair.
+	\item $PoP.PG(pk, sk, attrs)\rightarrow \pi$: A probabilistic proof
+		generation algorithm that takes as input a public key, secret key, and
+		attributes $attrs \in \{0, 1\}^*$, and outputs a proof string. (In our
+		application, $attrs$ could be the body of a certificate signing
+		request, for example.) In this case could be binding id with PAKE.
+    
+    \item $PoP.Vf(pk,attrs,\pi)\rightarrow \{0,1\}$: A deterministic verification algorithm that takes as input a public key $pk$, attributes $attrs$, and proof $\pi$, and outputs $1$ if the proof is valid, and $0$ otherwise.
+    
+\end{itemize}
+\end{definition}
+
+\subsection{Example implementation}
+In our implementation, we decided to use SPAKE2 as PAKE protocol, and for the
+proof of possession, we use Schnorr signature.
+
+\subsubsection{SPAKE2 Implementation} For the implementation we use the
+implementation of Warner \cite{warner_spake2}. The implementation provides a
+spake2.py file. Inside the file, there are several classes. We use the class
+"SPAKE2\_A" which has following main methods.
+
+\begin{itemize}
+	\item the constructor \_\_init\_\_() which initializes the all the
+		necessary values 
+	\item start() which generates the ephemeral public key
+	\item finish(inbound\_message) which authenticates the opposite entity and
+		generates an ephemeral secret key
+\end{itemize}
+
+Code Snippet:
+\begin{minted}[frame=lines, linenos, breaklines]{python}
+	class SPAKE2_Base:
+    "This class manages one side of a SPAKE2 key negotiation."
+
+    side = None # set by the subclass
+
+    def __init__(self, password,
+                 params=DefaultParams, entropy_f=os.urandom):
+        assert isinstance(password, bytes)
+        self.pw = password
+        self.pw_scalar = params.group.password_to_scalar(password)
+
+        assert isinstance(params, _Params), repr(params)
+        self.params = params
+        self.entropy_f = entropy_f
+
+        self._started = False
+        self._finished = False
+
+    def start(self):
+        if self._started:
+            raise OnlyCallStartOnce("start() can only be called once")
+        self._started = True
+
+        g = self.params.group
+        self.xy_scalar = g.random_scalar(self.entropy_f)
+        self.xy_elem = g.Base.scalarmult(self.xy_scalar)
+        self.compute_outbound_message()
+        # Guard against both sides using the same side= by adding a side byte
+        # to the message. This is not included in the transcript hash at the
+        # end.
+        outbound_side_and_message = self.side + self.outbound_message
+        return outbound_side_and_message
+
+    def finish(self, inbound_side_and_message):
+        if self._finished:
+            raise OnlyCallFinishOnce("finish() can only be called once")
+        self._finished = True
+
+        g = self.params.group
+        inbound_elem = g.bytes_to_element(self.inbound_message)
+        if inbound_elem.to_bytes() == self.outbound_message:
+            raise ReflectionThwarted
+        #K_elem = (inbound_elem + (self.my_unblinding() * -self.pw_scalar)
+        #          ) * self.xy_scalar
+        pw_unblinding = self.my_unblinding().scalarmult(-self.pw_scalar)
+        K_elem = inbound_elem.add(pw_unblinding).scalarmult(self.xy_scalar)
+        K_bytes = K_elem.to_bytes()
+        key = self._finalize(K_bytes)
+        return key
+
+class SPAKE2_A(SPAKE2_Asymmetric):
+	side = SideA
+	def my_blinding(self): return self.params.M
+	def my_unblinding(self): return self.params.N
+	def X_msg(self): return self.outbound_message
+	def Y_msg(self): return self.inbound_message
+
+class SPAKE2_B(SPAKE2_Asymmetric):
+	side = SideB
+	def my_blinding(self): return self.params.N
+	def my_unblinding(self): return self.params.M
+	def X_msg(self): return self.inbound_message
+	def Y_msg(self): return self.outbound_message
+\end{minted}
+
+\subsubsection{POP}
+For the proof of possession, the Schnorr Signature is used. 
+The POP phase consists of two parts. 
+
+The first part consists of key generation and signing:
+We use a hash key derivation function which we then split into three
+keys. 
+\[sk1, sk2, sk3 = HKDF(ephermal\_key)\]
+Pick random scalar a (or b) and Compute A (or B)
+\[A = G*a\]
+or
+\[B = G*b\]
+Pick random scalar k and compute K:
+\[K = G*k\]
+
+Compute e and s such that:
+\[e = H(K || A (or B) || PakeID)\]
+\[s = k + e * (-a (or b))\]
+
+Outbound message to send:
+\[(A, s, e)\]
+or
+\[(B, s, e)\]
+
+The second part consists of verification:
+Upon receiving the previous output you have:
+\[A', s', e'\]
+Re-calculate e:
+\[e'' = H(K || A (or B) || PakeID)\]
+Output:
+\[True, if e''== e'\]
+\[False, if otherwise\]
+
+Code snippet:
+\begin{minted}[frame=lines, linenos, breaklines]{python}
+class I_PKEX(SPAKE2_Asymmetric):
+
+    def start_pkex(self, key):
+        if not self._finished: 
+            raise RunSpakeFirst("start_pkex() may only be called when SPAKE2 protocol is finished running")
+
+        g = self.params.group
+
+        sk = HKDF(
+                algorithm=hashes.SHA256(),
+                length=len(key)*3,
+                salt=None,
+                info=None,
+                ).derive(key)
+
+        split_size = len(sk) // 3
+        sk1 = sk[:split_size]
+        assert len(sk1) == split_size, len(sk1)
+        sk2 = sk[split_size:2*split_size]
+        assert len(sk2) == split_size, len(sk2)
+        self.pake_id = sk[2*split_size:]
+        assert len(self.pake_id) == split_size, len(self.pake_id)
+
+        # inbound_element is public key A (pA)
+        # inbound_elem = g.bytes_to_element(self.inbound_message) 
+
+        # sk = a, pk = g * a = A
+        self.ab_scalar = g.random_scalar(self.entropy_f)
+        self.AB_element = g.Base.scalarmult(self.ab_scalar)
+
+        # random k
+        self.k = g.random_scalar(self.entropy_f)
+        # print("ab_scalar: ", self.ab_scalar)
+        # print("k", self.k)
+        self.K_element = g.Base.scalarmult(self.k)
+
+        self.e = hashes.Hash(hashes.SHA256())
+        self.e.update(self.K_element.to_bytes() + self.AB_element.to_bytes() + self.pake_id)
+        self.e = self.e.finalize()
+
+        print("To be checked: ", self.e)
+        self.e = g.password_to_scalar(self.e)
+        
+        print(self.k)
+        self.s = (self.k + self.e * (-self.ab_scalar)) % L
+
+        return (self.AB_element.to_bytes(), self.s, self.e)
+
+    def finalize(self, key, data):
+        g = self.params.group
+
+        (AB_element, s, e) = data
+        AB_element = g.bytes_to_element(AB_element) 
+
+        g_s = g.Base.scalarmult(s)
+        pk_e = AB_element.scalarmult(e)
+
+        K_element_check = g_s.add(pk_e)
+        e_check = hashes.Hash(hashes.SHA256())
+        e_check.update(K_element_check.to_bytes() + AB_element.to_bytes() + self.pake_id)
+        e_check = e_check.finalize()
+        e_check = g.password_to_scalar(e_check)
+        print("To be checked: ", e)
+        print("Checking e: ", e_check)
+
+        return e_check == e
+\end{minted}
+
+\subsection{Benchmarks}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Benchmarks & Average time for one exchange \\ \hline
+PKEX   & 0,03060 seconds\\ \hline
+Improved PKEX   & 0,03666\\ \hline
+\end{tabular}
+\caption{Average time for one exchange}
+\label{tab:basic}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Benchmarks & Average time for one exchange \\ \hline
+PKEX   & 0,35223 seconds\\ \hline
+Improved PKEX   & 0,31128\\ \hline
+\end{tabular}
+\caption{Average time for 10 exchanges}
+\label{tab:basic}
+\end{table}
+
+While the improved PKEX has a slightly higher cost for a single exchange maybe
+due to its modular components. It has a better performance over multiple
+exchanges. The reason may be because of the optimizations in key reuse.

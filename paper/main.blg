@@ -1,0 +1,65 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: ACM-Reference-Format.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: references.bib
+You're missing a field name---line 40 of file references.bib
+ :   year         = {2025}, 
+ :                          % Update this if the year of access differs
+I'm skipping whatever remains of this entry
+You're missing a field name---line 48 of file references.bib
+ :   year         = {2025}, 
+ :                          % Update this if the year of access differs
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "Abdalla_2005"
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--empty address in Abdalla2005
+You've used 5 entries,
+            5981 wiz_defined-function locations,
+            1506 strings with 18597 characters,
+and the built_in function-call counts, 4273 in all, are:
+= -- 475
+> -- 99
+< -- 1
++ -- 27
+- -- 42
+* -- 243
+:= -- 447
+add.period$ -- 28
+call.type$ -- 5
+change.case$ -- 26
+chr.to.int$ -- 5
+cite$ -- 6
+duplicate$ -- 404
+empty$ -- 286
+format.name$ -- 46
+if$ -- 939
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 5
+newline$ -- 95
+num.names$ -- 35
+pop$ -- 136
+preamble$ -- 1
+purify$ -- 66
+quote$ -- 0
+skip$ -- 168
+stack$ -- 0
+substring$ -- 314
+swap$ -- 33
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 150
+warning$ -- 1
+while$ -- 38
+width$ -- 0
+write$ -- 148
+(There were 2 error messages)

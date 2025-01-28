@@ -1,0 +1,90 @@
+\section{Analysis}
+\subsection{Detailed Definition}
+As described above PKEX has two phases.
+\subsubsection{Authentication phase}
+The next steps are done by both parties, Alice and Bob.
+Values known to each party: \(pw, Pi, Pr\)
+Alice picks random \(x\) and calculates \(X, Q\_a, M\):
+\[x, X = x * G\]
+\[Q\_a = H(pw) * Pi\]
+\[M = X + Q\_a\]
+
+Bob picks random \(y\) and calculates \(Y, Q\_b\):
+\[y, Y = y * G\]
+\[Q\_b  = H(pw) * Pr\]
+
+Alice sends \(Alice, M\) to Bob. Bob derives values and generates an ephemeral
+secret key.
+\[Q\_a = H(pw) * Pi\]
+\[X' = M - Q\_a\]
+\[N = Y + Q\_b\]
+\[z = KDF-n(F(y*X', Alice | Bob | F(M) | F(N) | pw))\]
+
+Bob sends \(Bob, N\) to Bob and Alice derives values and an ephemeral secret key.
+\[Q\_b = H(pw) * Pr\]
+\[Y' = N - Q\_b\]
+\[z = KDF-n(F(x*Y', Alice | Bob | F(M) | F(N) | pw))\]
+
+\subsubsection{Reveal phase}
+Here \(a = F(B)\) is a function that takes an element and returns a scalar.
+Alice picks random a and calculates A, then derives u. 
+\[a, A = a * G \]
+\[u = HMAC(F(a * Y'), Alice | F(A) | F(Y') | F(X))\]
+Alice sends \(A, u\) using authentication encryption with the first half of the key
+naming it \(z\_0\). Bob checks the encryption and derives values. 
+\[if (AE-decrypt returns fail) fail\]
+\[if (A not valid element) fail\]
+\[u' = HMAC(F(y * A), Alice | F(A) | F(Y) | F(X'))\]
+\[if (u' != u) fail\]
+\[v = HMAC(F(b * X'), Bob | F(B) | F(X') | F(Y))\]
+Bob sends \(B, v\) using authentication encryption with the second half of the key
+naming it \(z\_1\). Alice checks the encryption and derives values. 
+\[if (AE-decrypt returns fail) fail\]
+\[if (B not valid element) fail\]
+\[v = HMAC(F(x * B), Bob | F(B) | F(X) | F(Y'))\]
+\[if (v' != v) fail\]
+
+\subsection{Limitations}
+
+PKEX has several limitations. First, the security of the protocol has not yet
+been formally proven. There are several reasons for this. One reason, as
+mentioned by the author, is that he is not an academic expert and may not have
+the resources or expertise to conduct formal proofs. However, the protocol's
+design has inherent challenges to proving its security. Specifically, the reuse
+of ephemeral keys in both the authentication and reveal phases complicates the
+proof for several reasons:
+
+\begin{itemize} 
+	\item The reuse of ephemeral keys \begin{itemize}
+
+	\item the constructor \_\_init\_\_() which initializes the all the
+
+		necessary values 
+
+	\item start() which generates the ephemeral public key
+
+	\item finish(inbound\_message) which authenticates the opposite entity and
+
+		generates an ephemeral secret key
+
+\end{itemize}creates dependencies between the two
+		phases, making it more difficult to prove their security independently.
+		Ideally, each phase should be isolated so that the security proof can
+		be constructed without accounting for interactions between the phases.
+	\item This dependency increases the potential for unforeseen
+		vulnerabilities, as the interactions between the phases may introduce
+		complex attack vectors. As a result, constructing and verifying a
+		formal proof of security becomes significantly harder. 
+	\item The reuse of ephemeral keys might expose patterns in the two phases
+		that an attacker could exploit, leading to the potential leakage of
+		private key information. Consequently, the proof must account for how
+		the Proof of Possession (PoP) guarantees hold in such scenarios.
+\end{itemize}
+
+The lack of modularity in PKEX further limits its flexibility. If the protocol
+were structured in a more modular and independent way, each phase could be
+modified or improved without impacting the others. Additionally, if a
+vulnerability were discovered in one phase, it could be replaced or updated
+without affecting the overall system. However, the current design ties the
+phases together, making it difficult to implement changes or fixes without
+disrupting the entire protocol.

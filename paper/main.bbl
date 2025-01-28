@@ -1,0 +1,105 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{5}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Abdalla and Pointcheval(2005)]%
+        {Abdalla2005}
+\bibfield{author}{\bibinfo{person}{Michel Abdalla} {and} \bibinfo{person}{David
+  Pointcheval}.} \bibinfo{year}{2005}\natexlab{}.
+\newblock \showarticletitle{Simple Password-Based Encrypted Key Exchange
+  Protocols}. In \bibinfo{booktitle}{\emph{Topics in Cryptology -- CT-RSA
+  2005}} \emph{(\bibinfo{series}{Lecture Notes in Computer Science},
+  Vol.~\bibinfo{volume}{3376})}. \bibinfo{publisher}{Springer},
+  \bibinfo{pages}{191--208}.
+\newblock
+\urldef\tempurl%
+\url{https://www.di.ens.fr/~mabdalla/papers/AbPo05a-letter.pdf}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Harkins(2018)]%
+        {harkins-pkex-06}
+\bibfield{author}{\bibinfo{person}{Dan Harkins}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{{Public Key Exchange}}}.
+\newblock \bibinfo{type}{Internet-Draft} draft-harkins-pkex-06.
+  \bibinfo{institution}{Internet Engineering Task Force}.
+\newblock
+\urldef\tempurl%
+\url{https://datatracker.ietf.org/doc/draft-harkins-pkex/06/}
+\showURL{%
+\tempurl}
+\newblock
+\shownote{Work in Progress}.
+
+
+\bibitem[Meireles(2025)]%
+        {malga_steve}
+\bibfield{author}{\bibinfo{person}{Steve Meireles}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{I-PKEX: Proposal to improve PKEX}.
+\newblock
+\newblock
+
+
+\bibitem[Warner(2025)]%
+        {warner_spake2}
+\bibfield{author}{\bibinfo{person}{Brian Warner}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{python-spake2: A Python Implementation of SPAKE2}.
+\newblock
+\newblock
+
+
+\bibitem[{Wi-Fi Alliance}(2025)]%
+        {wifi_easy_connect}
+\bibfield{author}{\bibinfo{person}{{Wi-Fi Alliance}}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{{Wi-Fi Easy Connect}}.
+\newblock
+\newblock
+\urldef\tempurl%
+\url{https://www.wi-fi.org/discover-wi-fi/wi-fi-easy-connect}
+\showURL{%
+\tempurl}
+\newblock
+\shownote{Accessed: 2025-01-06}.
+
+
+\end{thebibliography}
