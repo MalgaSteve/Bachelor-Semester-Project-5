@@ -1,1 +1,37 @@
 \section{Conclusion}
+
+In conclusion, while PKEX \cite{harkins-pkex-06} is widely used and included in
+the Easy-Connect Specification, it exhibits several limitations. This paper
+thoroughly analyzes the PKEX protocol, identifies its shortcomings, and
+proposes an improved solution to address these issues.
+
+The primary limitations of PKEX highlighted in this work are the lack of
+modularity and the reuse of ephemeral keys, which could impact both flexibility
+and security. The PKEX protocol is structured in two phases: the authentication
+phase and the reveal phase. The first phase employs the SPAKE2 protocol
+proposed by Abdalla \cite{Abdalla_2005}, while the second utilizes values from
+the initial phase to achieve proof of possession and bind a private key to an
+entity.
+
+Our proposed protocol addresses these limitations by ensuring that the second
+phase does not reuse values directly from the first phase, instead relying
+only on the output of the authentication phase. This approach improves
+modularity and security. In the authentication phase, any secure PAKE
+protocol such as SPAKE2 can be used. Similarly, any proof-of-possession
+mechanism such as the Schnorr Signature can be integrated into the second
+phase. This modularity allows for greater flexibility and the potential to
+adopt newer cryptographic primitives as they emerge.
+
+To validate our proposal, we implemented and compared both protocols
+\cite{malga_steve}. Benchmarking results show that while our protocol is
+slightly slower for single exchanges, it is faster when performing multiple
+exchanges, demonstrating its practical advantages in scenarios requiring
+repeated key exchanges.
+
+\subsubsection{Future Improvements}
+
+While our proposal demonstrates clear benefits, certain areas remain open for
+improvement. The lack of a formal proof of security for the protocol should be
+addressed, as it would provide stronger theoretical guarantees than PKEX.
+Additionally, the current implementation could be further refined to enhance
+modularity and ease of integration with other cryptographic components.
